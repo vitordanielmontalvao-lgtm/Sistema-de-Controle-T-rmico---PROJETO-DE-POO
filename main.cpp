@@ -1,7 +1,8 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
-#include <locale>
+#include <windows.h>
+
 
 using namespace std;
 
@@ -66,7 +67,7 @@ public:
 
         cout << endl << "[" << nome << " - Pino " << pino << "] " << endl;
         cout << "PWM Ventoinha (MOSFET): " << pwmVentoinha << "/255 " << endl;
-        cout << "Rotação Ventoinha: " << rotacao << " /2500 RPM" << endl;
+        cout << "RotaÃ§Ã£o Ventoinha: " << rotacao << " /2500 RPM" << endl;
     }
 };
 
@@ -86,7 +87,7 @@ public:
         }
 
         cout << endl << "[" << nome << " - Pino " << pino << "]" << endl;
-        cout << "PWM Célula Peltier (MOSFET): " << pwmPeltier << "/255" << endl;
+        cout << "PWM CÃ©lula Peltier (MOSFET): " << pwmPeltier << "/255" << endl;
     }
 };
 
@@ -96,7 +97,7 @@ private:
     string statusBuzzer;
 
 public:
-    Sinalizador(string n, int p) : Dispositivo(n, p), corLED("Desligado"), statusBuzzer("Silêncio") {}
+    Sinalizador(string n, int p) : Dispositivo(n, p), corLED("Desligado"), statusBuzzer("SilÃªncio") {}
 
     void atualizar(float temp, int margem, int zona) override {
         if (zona == SEGURA) {
@@ -107,12 +108,12 @@ public:
         else if (zona == ALERTA) {
             long intervalo = mapc(temp, FATOR_ALERTA * margem, FATOR_PERIGO * margem, 500, 100);
             corLED = "AMARELO (HIGH fixo)";
-            statusBuzzer = "Bipes espaçados (110 Hz a cada " + to_string(intervalo) + " ms)";
+            statusBuzzer = "Bipes espaÃ§ados (110 Hz a cada " + to_string(intervalo) + " ms)";
         }
         else {
             long intervalo = mapc(temp, FATOR_PERIGO * margem, TEMP_MAX, 200, 50);
             corLED = "VERMELHO (HIGH fixo)";
-            statusBuzzer = "Bipes rápidos (114 Hz a cada " + to_string(intervalo) + " ms)";
+            statusBuzzer = "Bipes rÃ¡pidos (114 Hz a cada " + to_string(intervalo) + " ms)";
         }
 
         cout << endl << "[" << nome << " - Pino " << pino << "] " << endl;
@@ -131,9 +132,9 @@ private:
 public:
     SistemaControleTermico() : temperatura(25.0), margem(50), ativo(true) {
         cout << endl << "Dispositivo ligado" << endl;
-        dispositivos[0] = new Ventoinha("Módulo de Refrigeração (MOSFET)", 5);
+        dispositivos[0] = new Ventoinha("MÃ³dulo de RefrigeraÃ§Ã£o (MOSFET)", 5);
         dispositivos[1] = new Sinalizador("Painel de Alerta (LED/Buzzer)", 12);
-        dispositivos[2] = new CelulaPeltier("Módulo de Aquecimento (MOSFET)", 10);
+        dispositivos[2] = new CelulaPeltier("MÃ³dulo de Aquecimento (MOSFET)", 10);
     }
 
     ~SistemaControleTermico() {
@@ -168,8 +169,8 @@ public:
         string nomeZona = (zona == SEGURA) ? "SEGURA" : (zona == ALERTA ? "ALERTA" : "PERIGO");
 
         cout << endl << "================ DISPLAY OLED ================" << endl;
-        cout << "Temperatura do sensor: " << temperatura << "°C" << endl;
-        cout << "Temperatura alvo: " << margem << "°C" << endl;
+        cout << "Temperatura do sensor: " << temperatura << "Â°C" << endl;
+        cout << "Temperatura alvo: " << margem << "Â°C" << endl;
         cout << "Status da Zona: " << nomeZona << endl;
         cout << "--------------------------------------------------" << endl;
 
@@ -181,7 +182,7 @@ public:
 };
 
 int main() {
-setlocale(LC_ALL, "Portuguese");
+    SetConsoleOutputCP(65001);
 
     SistemaControleTermico sistema;
 
@@ -189,13 +190,13 @@ setlocale(LC_ALL, "Portuguese");
     int tempAlvo;
     char continuar;
 
-    cout << endl << "=== SISTEMA DE CONTROLE TÉRMICO ===" << endl;
+    cout << endl << "=== SISTEMA DE CONTROLE TÃ‰RMICO ===" << endl;
 
     do {
-        cout << endl << "Digite a temperatura lida pelo sensor (-40°C a 125°C): " << endl;
+        cout << endl << "Digite a temperatura lida pelo sensor (-40Â°C a 125Â°C): " << endl;
         cin >> tempSensor;
 
-        cout << "Digite a temperatura alvo do potenciômetro (30°C a 70°C): " << endl;
+        cout << "Digite a temperatura alvo do potenciÃ´metro (30Â°C a 70Â°C): " << endl;
         cin >> tempAlvo;
 
         sistema.setTemperatura(tempSensor);
@@ -204,7 +205,7 @@ setlocale(LC_ALL, "Portuguese");
 
         cout << endl << "Deseja realizar uma nova leitura? " << endl;
         cout << "S/s - Sim" << endl;
-        cout << "N/n - Não" << endl;
+        cout << "N/n - NÃ£o" << endl;
         cout << endl << "Digite a tecla de resposta: " << endl;
         cin >> continuar;
 
@@ -212,6 +213,6 @@ setlocale(LC_ALL, "Portuguese");
 
     sistema.setAtivo(false);
 
-    cout << endl << "Operação encerrada" << endl;
+    cout << endl << "OperaÃ§Ã£o encerrada" << endl;
     return 0;
 }
