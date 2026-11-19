@@ -2,6 +2,7 @@
 #include <string>
 #include <algorithm>
 #include <windows.h>
+#include <locale>
 
 
 using namespace std;
@@ -183,6 +184,7 @@ public:
 
 int main() {
     SetConsoleOutputCP(65001);
+setlocale(LC_ALL, "Portuguese");
 
     SistemaControleTermico sistema;
 
